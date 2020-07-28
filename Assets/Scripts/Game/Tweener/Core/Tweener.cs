@@ -23,6 +23,7 @@ namespace Game.Tweener.Core
         private Utility.Curves.Ease _ease;
         private bool _from;
         private bool _loop;
+        private LoopType _loopType;
         private float _duration;
 
         private T _startValue;
@@ -77,9 +78,10 @@ namespace Game.Tweener.Core
             return this;
         }
 
-        public Tweener<T, TTweenData> SetLoop(bool flag)
+        public Tweener<T, TTweenData> SetLoop(bool flag, LoopType loopType = LoopType.Normal)
         {
             _loop = flag;
+            _loopType = loopType;
             return this;
         }
 
@@ -156,7 +158,6 @@ namespace Game.Tweener.Core
 
             if (!(_durationValue > _duration))
             {
-                _durationValue += _stopwatch.ElapsedTicks / 10000000f;
                 return false;
             }
             
@@ -169,6 +170,25 @@ namespace Game.Tweener.Core
                 return true;
             }
 
+            switch (_loopType)
+            {
+                case LoopType.Normal:
+                    break;
+                case LoopType.PingPong:
+                    var tmp = _startValue;
+                    _startValue = _endValue;
+                    _endValue = tmp;
+                    break;
+                case LoopType.Continue:
+                    if (_from)
+                    {
+                        _startValue = _getter();
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
             _durationValue = 0;
             
             return false;
@@ -189,4 +209,11 @@ namespace Game.Tweener.Core
     public delegate void TweenerSetter<in T>(T value);
     public delegate T TweenerGetter<out T>();
     public delegate void TweenerCallback();
+
+    public enum LoopType
+    {
+        Normal,
+        PingPong,
+        Continue
+    }
 }
