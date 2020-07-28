@@ -7,7 +7,7 @@ namespace Game.Util.Extensions
 {
     public static class GraphicExtension
     {
-        public static Tweener<Color, ColorTweenData> DoAlphaFade(this Image image, float alphaEndValue, float duration)
+        public static Tweener<Color, ColorTweenData> DoAlphaFade(this Graphic image, float alphaEndValue, float duration)
         {
             var color = image.color;
             return Tweener<Color, ColorTweenData>.To(
@@ -18,7 +18,7 @@ namespace Game.Util.Extensions
                 duration);
         }
 
-        public static Tweener<Color, ColorTweenData> DoFade(this Image image, Color endValue, float duration)
+        public static Tweener<Color, ColorTweenData> DoFade(this Graphic image, Color endValue, float duration)
         {
             return Tweener<Color, ColorTweenData>.To(
                 obj => image.color = obj,
