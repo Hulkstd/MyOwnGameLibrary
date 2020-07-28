@@ -83,7 +83,7 @@ namespace Game.Util
 
             public T PopObject()
             {
-                if (_objects.All(obj => obj.IsActive())) 
+                if (_objects.Count != 0 && _objects.Any(obj => !obj.IsActive())) 
                     return _objects.FirstOrDefault(obj => !obj.IsActive());
                 
                 var returnObject = new T();
@@ -170,7 +170,7 @@ namespace Game.Util
         public static class Curves
         {
             private static float Sin(float x) => Mathf.Sin(x);
-            private static float Cos(float x) => Mathf.Sin(x);
+            private static float Cos(float x) => Mathf.Cos(x);
             private static float Pow(float x, float y) => Mathf.Pow(x, y);
             private static float Sqrt(float x) => Mathf.Sqrt(x);
             private static float PI => Mathf.PI;
