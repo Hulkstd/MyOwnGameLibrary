@@ -5,16 +5,12 @@ namespace Game.Serialization
 {
     public static class CSVReader
     {
-        public static readonly string Comma = "[comma]";
-        public static readonly string NewLine = "[newline]";
-        
+        public const string Comma = "[comma]";
+        public const string NewLine = "[newline]";
+
         [Serializable]
         public abstract class CSVData
         {
-            protected CSVData()
-            {
-            }
-            
             public virtual string SetData(string[] properties)
             {
                 for (var i = 0; i < properties.Length; i++)
