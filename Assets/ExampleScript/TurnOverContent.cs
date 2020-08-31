@@ -1,12 +1,13 @@
-﻿using Game.UI.Scroller.SlotTurnover;
+﻿using Game.UI.Scroller.Core;
+using Game.UI.Scroller.SlotTurnover;
 using UnityEngine.UI;
 
 namespace ExampleScript
 {
-    public class TurnOverContent : SlotTurnoverContent<TurnOverContent.TurnoverContentData>
+    public class TurnOverContent : ScrollContent<TurnOverContent.TurnoverContentData>
     {
         public Text text;
-        public class TurnoverContentData : SlotTurnoverContent.SlotTurnoverContentData
+        public class TurnoverContentData : ScrollContent.ScrollContentData
         {
             public string title;
         }
