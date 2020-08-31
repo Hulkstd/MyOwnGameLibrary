@@ -166,7 +166,7 @@ namespace Game.Tweener.Core
 
             if (!_loop)
             {
-                MonoMultiThread.instance.StartCoroutine(Disable(this));
+                MonoMultiThread.Instance.StartCoroutine(Disable(this));
                 return true;
             }
 

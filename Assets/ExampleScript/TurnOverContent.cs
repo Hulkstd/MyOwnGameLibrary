@@ -6,17 +6,17 @@ namespace ExampleScript
 {
     public class TurnOverContent : ScrollContent<TurnOverContent.TurnoverContentData>
     {
-        public Text text;
+        public Text _text;
         public class TurnoverContentData : ScrollContent.ScrollContentData
         {
-            public string title;
+            public string Title;
         }
 
         public override void SetContentData(TurnoverContentData tdata)
         {
             base.SetContentData(tdata);
 
-            text.text = tdata.title;
+            _text.text = tdata.Title;
         }
     }
 }

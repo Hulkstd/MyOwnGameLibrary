@@ -9,7 +9,7 @@ namespace ExampleScript
 {
     public class ThreadTest : MonoBehaviour
     {
-        private int k = 0;
+        private int _k = 0;
         
         private void Start()
         {

@@ -4,18 +4,18 @@ namespace ExampleScript
 {
     public class ScrollContent : Game.UI.Scroller.Core.ScrollContent<ScrollContent.ScrollContentData>
     {
-        public TextMeshProUGUI text;
+        public TextMeshProUGUI _text;
 
         public override void SetContentData(ScrollContentData tdata)
         {
             base.SetContentData(tdata);
 
-            text.text = tdata.index.ToString();
+            _text.text = tdata.Index.ToString();
         }
 
         public class ScrollContentData : Game.UI.Scroller.Core.ScrollContent.ScrollContentData
         {
-            public int index;
+            public int Index;
         }
     }
 }

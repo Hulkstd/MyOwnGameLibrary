@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Game.UI.Scroller.SlotTurnover;
@@ -17,49 +18,61 @@ namespace Game.UI.Scroller.Core
         #region variable
         
         [SerializeField] [Tooltip("중앙을 제외하고 양쪽에 보여야되는 콘탠츠 갯수")] [Range(0, 50)]
-        protected int ContentCount = 1;
+        protected int _contentCount = 1;
 
-        protected int TotalContentCount => ContentCount;
+        protected int TotalContentCount => _contentCount;
 
         protected int CreateContentCount =>
-            Mathf.Clamp(TotalContentCount + (ContentCount == 0 ? 0 : 1), 0, ContentDatas?.Count ?? 0);
-        protected int MiddleContentIndex => ContentCount / 2;
+            Mathf.Clamp(TotalContentCount + (_contentCount == 0 ? 0 : 1), 0, ContentDatas?.Count ?? 0);
+        protected int MiddleContentIndex => _contentCount / 2;
 
         [SerializeField] [Tooltip("지금 콘텐츠 위치")]
-        protected int CurrentContent;
+        protected int _currentContent;
+
+        protected Action<int> OnCurrentContentChange = null;
+        protected int CurrentContent
+        {
+            get => _currentContent;
+            set
+            {
+                OnCurrentContentChange?.Invoke(value);
+                
+                _currentContent = value;
+            }
+        }
 
         protected int CurrentContentForCalculate =>
-            CurrentContent < MiddleContentIndex ? CurrentContent :
-            CurrentContent < ContentDatas.Count - MiddleContentIndex ? MiddleContentIndex :
-            CurrentContent - (ContentDatas.Count - MiddleContentIndex * 2 - 1);
+            _currentContent < MiddleContentIndex ? _currentContent :
+            _currentContent < ContentDatas.Count - MiddleContentIndex ? MiddleContentIndex :
+            _currentContent - (ContentDatas.Count - MiddleContentIndex * 2 - 1);
 
         protected List<TContentData> ContentDatas;
 
         [SerializeField] [Tooltip("컨텐츠 디자인 프리펩")]
-        protected TContent ContentPrefab = null;
+        protected TContent _contentPrefab = null;
         
         [SerializeField] [Tooltip("컨텐츠 표시 사이즈.")]
-        protected Vector2 ContentSize;
+        protected Vector2 _contentSize;
 
-        public Button.ButtonClickedEvent ButtonsEvents;
+        public Button.ButtonClickedEvent _buttonsEvents;
 
         [SerializeField] [Tooltip("넘어갈 시 움직이는 속도")]
-        protected float ScrollSpeed = 2.0f;
+        protected float _scrollSpeed = 2.0f;
 
         [SerializeField] [Tooltip("내용들이 루프를 할지 말지 결정.")]
-        protected bool loop = false;
+        protected bool _loop = false;
 
         protected float ScrollSpeedPerFixedDeltaTime
         {
             get
             {
-                return Time.fixedDeltaTime * ScrollSpeed;
+                return Time.fixedDeltaTime * _scrollSpeed;
             }
         }
 
-        public List<TContent> ContentsList;
+        public List<TContent> _contentsList;
         
-        public GameObject Contents;
+        public GameObject _contents;
         
         #endregion
 
@@ -92,68 +105,68 @@ namespace Game.UI.Scroller.Core
 
         public virtual void InitiateContents()
         {
-            CurrentContent = loop ? MiddleContentIndex : 0;
+            _currentContent = _loop ? MiddleContentIndex : 0;
 
-            if (CreateContentCount < ContentsList.Count)
+            if (CreateContentCount < _contentsList.Count)
             {
-                for (var i = ContentsList.Count; i > CreateContentCount; i--)
+                for (var i = _contentsList.Count; i > CreateContentCount; i--)
                 {
-                    StartCoroutine(Destroy(ContentsList[i - 1].gameObject));
-                    ContentsList.RemoveAt(i - 1);
+                    StartCoroutine(Destroy(_contentsList[i - 1].gameObject));
+                    _contentsList.RemoveAt(i - 1);
                 }
 
-                foreach (var obj in ContentsList)
+                foreach (var obj in _contentsList)
                 {
                     obj.gameObject.SetActive(true);
                 }
             }
-            else if (CreateContentCount >= ContentsList.Count)
+            else if (CreateContentCount >= _contentsList.Count)
             {
                 for (var i = 0; i < CreateContentCount; i++)
                 {
                     TContent obj;
-                    if (ContentsList.Count <= i)
+                    if (_contentsList.Count <= i)
                     {
-                        if (ContentPrefab == null)
+                        if (_contentPrefab == null)
                         {
                             obj = new GameObject("content", typeof(Image), typeof(Button), typeof(TContent))
                                 .GetComponent<TContent>();
 
-                            ContentsList.Add(obj);
+                            _contentsList.Add(obj);
                         }
                         else
                         {
-                            obj = Instantiate(ContentPrefab, Contents.transform, false);
+                            obj = Instantiate(_contentPrefab, _contents.transform, false);
 
-                            ContentsList.Add(obj);
+                            _contentsList.Add(obj);
                         }
                     }
                     else
                     {
-                        obj = ContentsList[i];
+                        obj = _contentsList[i];
                     }
 
-                    InitializeRectTransform(obj.transform, ContentSize, CalculatePosition(i), CalculateSize(i),
-                        ButtonsEvents);
-                    ContentsList[i].gameObject.SetActive(true);
+                    InitializeRectTransform(obj.transform, _contentSize, CalculatePosition(i), CalculateSize(i),
+                        _buttonsEvents);
+                    _contentsList[i].gameObject.SetActive(true);
                 }
             }
 
-            if (ContentsList.Count == 0) return;
-            ContentsList.Last().gameObject.SetActive(false);
+            if (_contentsList.Count == 0) return;
+            _contentsList.Last().gameObject.SetActive(false);
 
-            if (loop)
+            if (_loop)
             {
                 for (var i = -MiddleContentIndex; i <= MiddleContentIndex; i++)
                 {
-                    ContentsList.GetIndex(i + MiddleContentIndex).SetContentData(ContentDatas.GetIndex(i));
+                    _contentsList.GetIndex(i + MiddleContentIndex).SetContentData(ContentDatas.GetIndex(i));
                 }
             }
             else
             {
-                for (var i = 0; i < ContentCount; i++)
+                for (var i = 0; i < _contentCount; i++)
                 {
-                    ContentsList[i].SetContentData(ContentDatas[i]);
+                    _contentsList[i].SetContentData(ContentDatas[i]);
                 }
             }
         }
@@ -175,14 +188,14 @@ namespace Game.UI.Scroller.Core
         protected virtual Vector2 VerticalCalculatePosition(int index, bool indexIsRelative = false)
         {
             var returnPos = Vector2.zero;
-            returnPos.y = -1 * ContentSize.y / 2;
+            returnPos.y = -1 * _contentSize.y / 2;
             var relativeIndex = indexIsRelative ? index : CurrentContentForCalculate - index;
             if (relativeIndex == 0)
             {
                 return returnPos;
             }
 
-            returnPos.y = relativeIndex * ContentSize.y - ContentSize.y / 2;
+            returnPos.y = relativeIndex * _contentSize.y - _contentSize.y / 2;
             
             return returnPos;
         }
@@ -198,36 +211,36 @@ namespace Game.UI.Scroller.Core
 
         protected virtual void OnValidate()
         {
-            if (Contents == null)
+            if (_contents == null)
             {
                 if (0 < transform.childCount)
                 {
                     if (transform.GetChild(0).name == "Contents")
                     {
-                        Contents = transform.GetChild(0).gameObject;
+                        _contents = transform.GetChild(0).gameObject;
                     }
                 }
                 else
                 {
-                    Contents = new GameObject("Contents", typeof(Mask), typeof(Image));
-                    Contents.transform.SetParent(transform);
-                    ((RectTransform) Contents.transform).sizeDelta = ((RectTransform) transform).sizeDelta;
-                    ((RectTransform) Contents.transform).localPosition = Vector3.zero;
-                    ((RectTransform) Contents.transform).localScale = Vector2.one;
-                    Contents.GetComponent<Image>().color = new Color(1, 1, 1, 0.01f);
+                    _contents = new GameObject("Contents", typeof(Mask), typeof(Image));
+                    _contents.transform.SetParent(transform);
+                    ((RectTransform) _contents.transform).sizeDelta = ((RectTransform) transform).sizeDelta;
+                    ((RectTransform) _contents.transform).localPosition = Vector3.zero;
+                    ((RectTransform) _contents.transform).localScale = Vector2.one;
+                    _contents.GetComponent<Image>().color = new Color(1, 1, 1, 0.01f);
                 }
             }
 
-            if (ContentsList == null)
+            if (_contentsList == null)
             {
-                ContentsList = new List<TContent>();
+                _contentsList = new List<TContent>();
             }
 
-            CurrentContent = Mathf.Clamp(CurrentContent, 0, ContentDatas?.Count ?? 0);
-            ContentCount += ContentCount != 0 && ContentCount % 2 == 0 ? 1 : 0;
+            _currentContent = Mathf.Clamp(_currentContent, 0, ContentDatas?.Count ?? 0);
+            _contentCount += _contentCount != 0 && _contentCount % 2 == 0 ? 1 : 0;
 
             InitiateContents();
-            CurrentContent = 0;
+            _currentContent = 0;
         }
 
         #endregion

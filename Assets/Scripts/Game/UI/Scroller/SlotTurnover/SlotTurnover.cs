@@ -27,22 +27,22 @@ namespace Game.UI.Scroller.SlotTurnover
         #region variable
 
         [SerializeField] [Tooltip("아이템들 움직이는 방향")]
-        protected ScrollDirection Direction = ScrollDirection.Horizontal;
+        protected ScrollDirection _direction = ScrollDirection.Horizontal;
 
         [SerializeField] [Tooltip("넘어가는 버튼의 크기")]
-        protected Vector2 ButtonSize = Vector2.one * 100;
+        protected Vector2 _buttonSize = Vector2.one * 100;
 
         [SerializeField] [Tooltip("중앙 콘탠츠 양 옆에 표시하는 콘텐츠 크기")]
-        protected Vector2 sideContentSize = Vector2.zero;
+        protected Vector2 _sideContentSize = Vector2.zero;
 
         [SerializeField] [Tooltip("중앙 콘텐츠 와 옆의 콘텐츠와의 떨어진 거리")]
-        protected float Merge = 20.0f;
+        protected float _merge = 20.0f;
 
-        public Button NextButton;
+        public Button _nextButton;
 
-        public Button PreviousButton;
+        public Button _previousButton;
 
-        private Coroutine action;
+        private Coroutine _action;
 
         #endregion
 
@@ -50,51 +50,51 @@ namespace Game.UI.Scroller.SlotTurnover
         
         public virtual void InitiateButton()
         {
-            if (NextButton == null)
+            if (_nextButton == null)
             {
                 if (transform.childCount >= 2)
                 {
                     if (transform.GetChild(1).name == "NextButton")
                     {
-                        NextButton = transform.GetChild(1).GetComponent<Button>();
+                        _nextButton = transform.GetChild(1).GetComponent<Button>();
                     }
                 }
                 else
                 {
                     var obj = new GameObject("NextButton", typeof(Button), typeof(Image));
                     var rectTransform = (RectTransform) obj.transform;
-                    NextButton = obj.GetComponent<Button>();
+                    _nextButton = obj.GetComponent<Button>();
 
                     rectTransform.SetParent(transform);
                     rectTransform.localScale = Vector3.one;
-                    rectTransform.sizeDelta = ButtonSize;
+                    rectTransform.sizeDelta = _buttonSize;
                     rectTransform.localPosition = Vector2.right *
-                                                  (((RectTransform) transform).sizeDelta.x * 0.5f + ButtonSize.x +
-                                                   Merge);
+                                                  (((RectTransform) transform).sizeDelta.x * 0.5f + _buttonSize.x +
+                                                   _merge);
                 }
             }
 
-            if (PreviousButton == null)
+            if (_previousButton == null)
             {
                 if (transform.childCount >= 3)
                 {
                     if (transform.GetChild(2).name == "PreviousButton")
                     {
-                        PreviousButton = transform.GetChild(2).GetComponent<Button>();
+                        _previousButton = transform.GetChild(2).GetComponent<Button>();
                     }
                 }
                 else
                 {
                     var obj = new GameObject("PreviousButton", typeof(Button), typeof(Image));
                     var rectTransform = (RectTransform) obj.transform;
-                    PreviousButton = obj.GetComponent<Button>();
+                    _previousButton = obj.GetComponent<Button>();
 
                     rectTransform.SetParent(transform);
                     rectTransform.localScale = Vector3.one;
-                    rectTransform.sizeDelta = ButtonSize;
+                    rectTransform.sizeDelta = _buttonSize;
                     rectTransform.localPosition = Vector2.left *
-                                                  (((RectTransform) transform).sizeDelta.x * 0.5f + ButtonSize.x +
-                                                   Merge);
+                                                  (((RectTransform) transform).sizeDelta.x * 0.5f + _buttonSize.x +
+                                                   _merge);
                 }
             }
         }
@@ -107,7 +107,7 @@ namespace Game.UI.Scroller.SlotTurnover
 
         protected override Vector2 CalculatePosition(int index, bool indexIsRelative = false)
         {
-            switch (Direction)
+            switch (_direction)
             {
                 case ScrollDirection.Horizontal:
                 {
@@ -125,7 +125,7 @@ namespace Game.UI.Scroller.SlotTurnover
 
         protected override Vector2 CalculateSize(int index, bool indexIsRelative = false)
         {
-            switch (Direction)
+            switch (_direction)
             {
                 case ScrollDirection.Horizontal:
                 {
@@ -150,9 +150,9 @@ namespace Game.UI.Scroller.SlotTurnover
                 return returnPos;
             }
 
-            var currentSize = ContentSize;
-            var relativeScale = sideContentSize / ContentSize;
-            var mergeY = Merge;
+            var currentSize = _contentSize;
+            var relativeScale = _sideContentSize / _contentSize;
+            var mergeY = _merge;
 
             for (var i = 0; i < Mathf.Abs(relativeIndex); i++)
             {
@@ -176,7 +176,7 @@ namespace Game.UI.Scroller.SlotTurnover
                 return returnSize;
             }
 
-            var relativeSize = sideContentSize / ContentSize;
+            var relativeSize = _sideContentSize / _contentSize;
 
             for (var i = 0; i < Mathf.Abs(relativeIndex); i++)
             {
@@ -195,9 +195,9 @@ namespace Game.UI.Scroller.SlotTurnover
                 return returnPos;
             }
 
-            var currentSize = ContentSize;
-            var relativeScale = sideContentSize / ContentSize;
-            var mergeX = Merge;
+            var currentSize = _contentSize;
+            var relativeScale = _sideContentSize / _contentSize;
+            var mergeX = _merge;
 
             for (var i = 0; i < Mathf.Abs(relativeIndex); i++)
             {
@@ -221,7 +221,7 @@ namespace Game.UI.Scroller.SlotTurnover
                 return returnSize;
             }
 
-            var relativeSize = sideContentSize / ContentSize;
+            var relativeSize = _sideContentSize / _contentSize;
 
             for (var i = 0; i < Mathf.Abs(relativeIndex); i++)
             {
@@ -239,39 +239,39 @@ namespace Game.UI.Scroller.SlotTurnover
 
         public void NextContent()
         {
-            if (!loop && action == null && CurrentContent + 1 < ContentDatas.Count)
+            if (!_loop && _action == null && _currentContent + 1 < ContentDatas.Count)
             {
-                if (CurrentContent + 1 > MiddleContentIndex && CurrentContent + 1 < ContentDatas.Count - MiddleContentIndex)
+                if (_currentContent + 1 > MiddleContentIndex && _currentContent + 1 < ContentDatas.Count - MiddleContentIndex)
                 {
-                    action = StartCoroutine(MoveContentsLoop(1));
+                    _action = StartCoroutine(MoveContentsLoop(1));
                 }
                 else
                 {
-                    action = StartCoroutine(MoveContents(CurrentContent + 1));
+                    _action = StartCoroutine(MoveContents(_currentContent + 1));
                 }
             }
-            else if (loop && action == null && (CurrentContent + 1) % TotalContentCount < TotalContentCount)
+            else if (_loop && _action == null && (_currentContent + 1) % TotalContentCount < TotalContentCount)
             {
-                action = StartCoroutine(MoveContentsLoop(1));
+                _action = StartCoroutine(MoveContentsLoop(1));
             }
         }
 
         public void PreviousContent()
         {
-            if (!loop && action == null && CurrentContent - 1 >= 0)
+            if (!_loop && _action == null && _currentContent - 1 >= 0)
             {
-                if (CurrentContent -1 > MiddleContentIndex - 1 && CurrentContent - 1 < ContentDatas.Count - MiddleContentIndex - 1)
+                if (_currentContent -1 > MiddleContentIndex - 1 && _currentContent - 1 < ContentDatas.Count - MiddleContentIndex - 1)
                 {
-                    action = StartCoroutine(MoveContentsLoop(-1));
+                    _action = StartCoroutine(MoveContentsLoop(-1));
                 }
                 else
                 {
-                    action = StartCoroutine(MoveContents(CurrentContent - 1));
+                    _action = StartCoroutine(MoveContents(_currentContent - 1));
                 }
             }
-            else if (loop && action == null && (TotalContentCount + CurrentContent - 1) % TotalContentCount >= 0)
+            else if (_loop && _action == null && (TotalContentCount + _currentContent - 1) % TotalContentCount >= 0)
             {
-                action = StartCoroutine(MoveContentsLoop(-1));
+                _action = StartCoroutine(MoveContentsLoop(-1));
             }
         }
 
@@ -281,45 +281,45 @@ namespace Game.UI.Scroller.SlotTurnover
         
         protected IEnumerator MoveContents(int to)
         {
-            if (!ContentsList.First().gameObject.activeSelf)
+            if (!_contentsList.First().gameObject.activeSelf)
             {
-                ContentsList.Add(ContentsList.First());
-                ContentsList.RemoveAt(0);
+                _contentsList.Add(_contentsList.First());
+                _contentsList.RemoveAt(0);
             }
             var fromPosition = new List<Vector2>();
             var fromSizeDelta = new List<Vector2>();
             
-            for (var index = 0; index < ContentsList.Count; index++)
+            for (var index = 0; index < _contentsList.Count; index++)
             {
                 fromPosition.Add(CalculatePosition(index));
                 fromSizeDelta.Add(CalculateSize(index));
             }
 
-            CurrentContent = to;
+            _currentContent = to;
 
             var toPosition = new List<Vector2>();
             var toSizeDelta = new List<Vector2>();
 
-            for (var index = 0; index < ContentsList.Count; index++)
+            for (var index = 0; index < _contentsList.Count; index++)
             {
                 toPosition.Add(CalculatePosition(index));
                 toSizeDelta.Add(CalculateSize(index));
             }
 
-            for (var i = 0; i < 60 / ScrollSpeed; i++)
+            for (var i = 0; i < 60 / _scrollSpeed; i++)
             {
-                for (var index = 0; index < ContentsList.Count; index++)
+                for (var index = 0; index < _contentsList.Count; index++)
                 {
-                    ((RectTransform) ContentsList[index].transform).localPosition = Vector3.Lerp(fromPosition[index],
+                    ((RectTransform) _contentsList[index].transform).localPosition = Vector3.Lerp(fromPosition[index],
                         toPosition[index], i * ScrollSpeedPerFixedDeltaTime);
-                    ((RectTransform) ContentsList[index].transform).localScale = Vector3.Lerp(fromSizeDelta[index],
+                    ((RectTransform) _contentsList[index].transform).localScale = Vector3.Lerp(fromSizeDelta[index],
                         toSizeDelta[index], i * ScrollSpeedPerFixedDeltaTime);
                 }
 
                 yield return YieldManager.GetWaitForFixedUpdate();
             }
 
-            action = null;
+            _action = null;
             ButtonActiveSet();
         }
 
@@ -345,8 +345,8 @@ namespace Game.UI.Scroller.SlotTurnover
                 fromSizeDelta.RemoveAt(0);
             }
 
-            CurrentContent += dir;
-            CurrentContent = (ContentDatas.Count + CurrentContent) % ContentDatas.Count;
+            _currentContent += dir;
+            _currentContent = (ContentDatas.Count + _currentContent) % ContentDatas.Count;
 
             var toPosition = new List<Vector2>();
             var toSizeDelta = new List<Vector2>();
@@ -362,16 +362,16 @@ namespace Game.UI.Scroller.SlotTurnover
                 toPosition.RemoveRange(0, 3);
                 toSizeDelta.RemoveRange(0, 3);
 
-                if (!ContentsList.First().gameObject.activeSelf)
+                if (!_contentsList.First().gameObject.activeSelf)
                 {
-                    var obj = ContentsList.First();
-                    ContentsList.Remove(obj);
-                    ContentsList.Add(obj);
+                    var obj = _contentsList.First();
+                    _contentsList.Remove(obj);
+                    _contentsList.Add(obj);
                     obj.gameObject.SetActive(true);
                 }
                 else
                 {
-                    var obj = ContentsList.Last();
+                    var obj = _contentsList.Last();
                     obj.gameObject.SetActive(true);
                 }
             }
@@ -380,57 +380,57 @@ namespace Game.UI.Scroller.SlotTurnover
                 toPosition.RemoveRange(toPosition.Count - 3, 3);
                 toSizeDelta.RemoveRange(toSizeDelta.Count - 3, 3);
 
-                if (!ContentsList.Last().gameObject.activeSelf)
+                if (!_contentsList.Last().gameObject.activeSelf)
                 {
-                    var obj = ContentsList.Last();
+                    var obj = _contentsList.Last();
                     obj.gameObject.SetActive(true);
                 }
                 else
                 {
-                    var obj = ContentsList.First();
-                    ContentsList.Remove(obj);
-                    ContentsList.Add(obj);
+                    var obj = _contentsList.First();
+                    _contentsList.Remove(obj);
+                    _contentsList.Add(obj);
                     obj.gameObject.SetActive(true);
                 }
             }
 
-            for (var i = -MiddleContentIndex + CurrentContent; i <= MiddleContentIndex + CurrentContent + 1; i++)
+            for (var i = -MiddleContentIndex + _currentContent; i <= MiddleContentIndex + _currentContent + 1; i++)
             {
-                ContentsList.GetIndex(i + MiddleContentIndex - CurrentContent + (dir < 0 ? 0 : dir))
+                _contentsList.GetIndex(i + MiddleContentIndex - _currentContent + (dir < 0 ? 0 : dir))
                     .SetContentData(ContentDatas.GetIndex(i));
             }
             ButtonActiveSet(MiddleContentIndex + (dir == 1 ? 0 : 1), true);
 
-            for (var index = 0; index < ContentsList.Count; index++)
+            for (var index = 0; index < _contentsList.Count; index++)
             {
-                ((RectTransform) ContentsList[index].transform).localPosition = fromPosition[index];
-                ((RectTransform) ContentsList[index].transform).localScale = fromSizeDelta[index];
+                ((RectTransform) _contentsList[index].transform).localPosition = fromPosition[index];
+                ((RectTransform) _contentsList[index].transform).localScale = fromSizeDelta[index];
             }
 
             yield return YieldManager.GetWaitForFixedUpdate();
 
-            for (var i = 0; i < 60 / ScrollSpeed; i++)
+            for (var i = 0; i < 60 / _scrollSpeed; i++)
             {
-                for (var index = 0; index < ContentsList.Count; index++)
+                for (var index = 0; index < _contentsList.Count; index++)
                 {
-                    ((RectTransform) ContentsList[index].transform).localPosition = Vector3.Lerp(fromPosition[index],
+                    ((RectTransform) _contentsList[index].transform).localPosition = Vector3.Lerp(fromPosition[index],
                         toPosition[index], i * ScrollSpeedPerFixedDeltaTime);
-                    ((RectTransform) ContentsList[index].transform).localScale = Vector3.Lerp(fromSizeDelta[index],
+                    ((RectTransform) _contentsList[index].transform).localScale = Vector3.Lerp(fromSizeDelta[index],
                         toSizeDelta[index], i * ScrollSpeedPerFixedDeltaTime);
                 }
 
                 yield return YieldManager.GetWaitForFixedUpdate();
             }
 
-            action = null;
+            _action = null;
 
             if (dir == 1)
             {
-                ContentsList.First().gameObject.SetActive(false);
+                _contentsList.First().gameObject.SetActive(false);
             }
             else
             {
-                ContentsList.Last().gameObject.SetActive(false);
+                _contentsList.Last().gameObject.SetActive(false);
             }
 
             ButtonActiveSet(MiddleContentIndex + (dir == 1 ? 1 : 0));
@@ -442,17 +442,17 @@ namespace Game.UI.Scroller.SlotTurnover
         
         protected void ButtonActiveSet()
         {
-            for (var i = 0; i < ContentsList.Count; i++)
+            for (var i = 0; i < _contentsList.Count; i++)
             {
-                ContentsList[i].GetComponent<Button>().interactable = (CurrentContentForCalculate == i);
+                _contentsList[i].GetComponent<Button>().interactable = (CurrentContentForCalculate == i);
             }
         }
 
         protected void ButtonActiveSet(int index, bool instance = false)
         {
-            for (var i = 0; i < ContentsList.Count; i++)
+            for (var i = 0; i < _contentsList.Count; i++)
             {
-                var button = ContentsList[i].GetComponent<Button>();
+                var button = _contentsList[i].GetComponent<Button>();
                 button.interactable = (index == i);
 
                 if (!instance) continue;
