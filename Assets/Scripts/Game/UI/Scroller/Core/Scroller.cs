@@ -189,7 +189,7 @@ namespace Game.UI.Scroller.Core
         {
             var returnPos = Vector2.zero;
             returnPos.y = -1 * _contentSize.y / 2;
-            var relativeIndex = indexIsRelative ? index : CurrentContentForCalculate - index;
+            var relativeIndex = indexIsRelative ? -index : CurrentContentForCalculate - index;
             if (relativeIndex == 0)
             {
                 return returnPos;
