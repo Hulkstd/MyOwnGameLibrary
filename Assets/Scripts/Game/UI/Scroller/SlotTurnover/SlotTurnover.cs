@@ -310,9 +310,9 @@ namespace Game.UI.Scroller.SlotTurnover
             {
                 for (var index = 0; index < _contentsList.Count; index++)
                 {
-                    ((RectTransform) _contentsList[index].transform).localPosition = Vector3.Lerp(fromPosition[index],
+                    _contentsList[index].RectTransform.localPosition = Vector3.Lerp(fromPosition[index],
                         toPosition[index], i * ScrollSpeedPerFixedDeltaTime);
-                    ((RectTransform) _contentsList[index].transform).localScale = Vector3.Lerp(fromSizeDelta[index],
+                    _contentsList[index].RectTransform.localScale = Vector3.Lerp(fromSizeDelta[index],
                         toSizeDelta[index], i * ScrollSpeedPerFixedDeltaTime);
                 }
 
@@ -403,8 +403,8 @@ namespace Game.UI.Scroller.SlotTurnover
 
             for (var index = 0; index < _contentsList.Count; index++)
             {
-                ((RectTransform) _contentsList[index].transform).localPosition = fromPosition[index];
-                ((RectTransform) _contentsList[index].transform).localScale = fromSizeDelta[index];
+                _contentsList[index].RectTransform.localPosition = fromPosition[index];
+                _contentsList[index].RectTransform.localScale = fromSizeDelta[index];
             }
 
             yield return YieldManager.GetWaitForFixedUpdate();
@@ -413,9 +413,9 @@ namespace Game.UI.Scroller.SlotTurnover
             {
                 for (var index = 0; index < _contentsList.Count; index++)
                 {
-                    ((RectTransform) _contentsList[index].transform).localPosition = Vector3.Lerp(fromPosition[index],
+                    _contentsList[index].RectTransform.localPosition = Vector3.Lerp(fromPosition[index],
                         toPosition[index], i * ScrollSpeedPerFixedDeltaTime);
-                    ((RectTransform) _contentsList[index].transform).localScale = Vector3.Lerp(fromSizeDelta[index],
+                    _contentsList[index].RectTransform.localScale = Vector3.Lerp(fromSizeDelta[index],
                         toSizeDelta[index], i * ScrollSpeedPerFixedDeltaTime);
                 }
 
