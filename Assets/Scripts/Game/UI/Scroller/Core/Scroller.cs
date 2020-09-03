@@ -244,5 +244,12 @@ namespace Game.UI.Scroller.Core
         }
 
         #endregion
+
+        public virtual void SetData(List<TContentData> list)
+        {
+            ContentDatas = list;
+            
+            OnValidate();
+        }
     }
 }

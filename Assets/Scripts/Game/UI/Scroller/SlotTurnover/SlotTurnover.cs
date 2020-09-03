@@ -477,11 +477,5 @@ namespace Game.UI.Scroller.SlotTurnover
 
         #endregion
 
-        public void SetData(List<TContentData> list)
-        {
-            ContentDatas = list;
-            
-            OnValidate();
-        }
     }
 }
