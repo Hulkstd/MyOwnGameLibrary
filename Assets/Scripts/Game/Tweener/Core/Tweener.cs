@@ -71,6 +71,12 @@ namespace Game.Tweener.Core
             return this;
         }
 
+        public Tweener<T, TTweenData> SetDuration(float duration)
+        {
+            _duration = duration;
+            return this;
+        }
+
         public Tweener<T, TTweenData> From(T from)
         {
             _from = true;
