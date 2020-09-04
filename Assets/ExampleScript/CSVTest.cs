@@ -10,22 +10,22 @@ namespace ExampleScript
         [Serializable]
         public class TestData : CSVReader.CSVData
         {
-            public int id;
-            public int number;
+            public int _id;
+            public int _number;
 
             public override string SetData(string[] properties)
             {
                 base.SetData(properties);
 
-                id = int.Parse(properties[0]);
-                number = int.Parse(properties[1]);
+                _id = int.Parse(properties[0]);
+                _number = int.Parse(properties[1]);
 
                 return properties[0];
             }
 
             public override string ToString()
             {
-                return $" ID:{id}   Number:{number}";
+                return $" ID:{_id}   Number:{_number}";
             }
         }
 

@@ -113,7 +113,7 @@ namespace Game.Threading
             object initializeData, int threadKey = -999)
         {
             threadKey = threadKey == -999 ? _workerThreadKey++ : threadKey;
-            var workerThread = new WorkerThread(instance, action, mainThreadAction, initializeData, threadKey);
+            var workerThread = new WorkerThread(Instance, action, mainThreadAction, initializeData, threadKey);
 
             var thread = new Thread(workerThread.Update);
             thread.Start();
