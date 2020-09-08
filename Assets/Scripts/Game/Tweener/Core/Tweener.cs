@@ -106,6 +106,7 @@ namespace Game.Tweener.Core
                 if (MonoMultiThread.IsContainThreadWorker(_threadKey) && MonoMultiThread.IsContainPauseList(_threadKey))
                 {
                     MonoMultiThread.ResumeThreadWorker(_threadKey);
+                    _stopwatch.Start();
                 }
                 else
                 {
@@ -139,6 +140,9 @@ namespace Game.Tweener.Core
         public void Pause()
         {
             MonoMultiThread.PauseThreadWorker(_threadKey);
+            IsPlaying = false;
+            IsPausing = true;
+            _stopwatch.Stop();
         }
 
         public bool IsActive()
