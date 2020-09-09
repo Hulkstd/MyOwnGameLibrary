@@ -24,7 +24,19 @@ namespace Game.Tweener.Module
 
         protected Tweener<TDataType, TData> Tweener;
 
-        protected void OnValidate()
+        protected virtual void OnEnable()
+        {
+            if (Tweener.IsPausing)
+                Tweener.Play();
+        }
+
+        protected void OnDisable()
+        {
+            if (Tweener.IsPlaying)
+                Tweener.Pause();
+        }
+
+        protected virtual void OnValidate()
         {
             if (_loopProperty._loopType == LoopType.Continue)
                 _loopProperty._loopType = LoopType.Normal;
