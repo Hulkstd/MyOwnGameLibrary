@@ -17,6 +17,7 @@ namespace Game.Tweener.Core
         private TweenerSetter<T> _setter;
         private TweenerGetter<T> _getter;
         private TTweenData _tweenFunc;
+        private Utility.Curves.Ease _ease;
 
         private T _startValue;
         private T _endValue;
@@ -39,7 +40,7 @@ namespace Game.Tweener.Core
             IsPlaying = false;
             IsPausing = false;
             IsComplete = true;
-            Ease = Utility.Curves.Ease.InSine;
+            _ease = Utility.Curves.Ease.InSine;
             base.From = false;
 
             _setter = setter;
@@ -53,7 +54,7 @@ namespace Game.Tweener.Core
 
         public Tweener<T, TTweenData> SetEase(Utility.Curves.Ease ease)
         {
-            Ease = ease;
+            _ease = ease;
             return this;
         }
 
@@ -114,7 +115,7 @@ namespace Game.Tweener.Core
 
         private object WorkThreadAction(object _)
         {
-            var easeValue = Utility.Curves.ExecuteEaseFunc(Ease, Mathf.Min(_durationValue / Duration, 1));
+            var easeValue = Utility.Curves.ExecuteEaseFunc(_ease, Mathf.Min(_durationValue / Duration, 1));
             _durationValue += Stopwatch.ElapsedTicks / 10000000f;
             Stopwatch.Restart();
 

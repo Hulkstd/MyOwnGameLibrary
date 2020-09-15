@@ -9,7 +9,6 @@ namespace Game.Tweener.Core
         protected int ThreadKey;
         protected Stopwatch Stopwatch;
         
-        protected Utility.Curves.Ease Ease;
         protected bool From;
         protected bool Loop;
         protected LoopType LoopType;
