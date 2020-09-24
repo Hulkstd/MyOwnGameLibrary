@@ -11,7 +11,7 @@ namespace Game.Tweener.Core
     /*todo
      Play(), Stop(), Restart(), Pause()
      */
-    public class Tweener<T, TTweenData> : Tween, Utility.IPoolingData
+    public class Tweener<T, TTweenData> : Tween
         where TTweenData : ITweenData<T>
     {
         private TweenerSetter<T> _setter;
@@ -21,7 +21,6 @@ namespace Game.Tweener.Core
 
         private T _startValue;
         private T _endValue;
-        private float _durationValue;
 
         public static Tweener<T, TTweenData> To(TweenerSetter<T> setter, TweenerGetter<T> getter,
             TTweenData tweenData, T endValue, float duration)
@@ -49,7 +48,7 @@ namespace Game.Tweener.Core
             _startValue = getter();
             _endValue = endValue;
             Duration = duration;
-            _durationValue = 0f;
+            DurationValue = 0f;
         }
 
         public Tweener<T, TTweenData> SetEase(Utility.Curves.Ease ease)
@@ -104,19 +103,13 @@ namespace Game.Tweener.Core
 
         public override void Restart()
         {
-            _durationValue = 0f;
+            DurationValue = 0f;
             base.Restart();
-        }
-
-        public bool IsActive()
-        {
-            return IsPlaying || IsComplete || IsPausing;
         }
 
         private object WorkThreadAction(object _)
         {
-            var easeValue = Utility.Curves.ExecuteEaseFunc(_ease, Mathf.Min(_durationValue / Duration, 1));
-            _durationValue += Stopwatch.ElapsedTicks / 10000000f;
+            var easeValue = Utility.Curves.ExecuteEaseFunc(_ease, Mathf.Clamp(DurationValue / Duration, 0, 1));
             Stopwatch.Restart();
 
             return _tweenFunc.Evaluate(_startValue, _endValue, base.From, easeValue);
@@ -129,7 +122,7 @@ namespace Game.Tweener.Core
             _setter(value);
             OnUpdate?.Invoke();
 
-            if (!(_durationValue > Duration))
+            if (!(DurationValue > Duration))
             {
                 return false;
             }
@@ -162,20 +155,9 @@ namespace Game.Tweener.Core
                     throw new ArgumentOutOfRangeException();
             }
             
-            _durationValue = 0;
+            DurationValue = 0;
             
             return false;
-        }
-
-        private static IEnumerator Disable(Tweener<T,TTweenData> tweener)
-        {
-            yield return YieldManager.GetWaitForSeconds(2.0f);
-            
-            tweener.IsPlaying = false;
-            tweener.IsComplete = false;
-            tweener.IsPausing = false;
-            
-            yield break;
         }
     }
 
