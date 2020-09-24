@@ -14,6 +14,8 @@ namespace Game.Tweener.Core
     public class Tweener<T, TTweenData> : Tween
         where TTweenData : ITweenData<T>
     {
+        private static float _timeScale;
+        
         private TweenerSetter<T> _setter;
         private TweenerGetter<T> _getter;
         private TTweenData _tweenFunc;
@@ -49,6 +51,8 @@ namespace Game.Tweener.Core
             _endValue = endValue;
             Duration = duration;
             DurationValue = 0f;
+            
+            _timeScale = Time.timeScale;
         }
 
         public Tweener<T, TTweenData> SetEase(Utility.Curves.Ease ease)
@@ -79,7 +83,6 @@ namespace Game.Tweener.Core
 
         public override void Play()
         {
-            base.Play();
             if (IsPlaying)
                 return;
             
@@ -99,6 +102,8 @@ namespace Game.Tweener.Core
             {
                 ThreadKey = MonoMultiThread.InsertThreadWorker(WorkThreadAction, MainThreadAction, _startValue);
             }
+            
+            base.Play();
         }
 
         public override void Restart()
@@ -110,6 +115,7 @@ namespace Game.Tweener.Core
         private object WorkThreadAction(object _)
         {
             var easeValue = Utility.Curves.ExecuteEaseFunc(_ease, Mathf.Clamp(DurationValue / Duration, 0, 1));
+            DurationValue += (Stopwatch.ElapsedTicks / 10000000f) * _timeScale;
             Stopwatch.Restart();
 
             return _tweenFunc.Evaluate(_startValue, _endValue, base.From, easeValue);
@@ -117,6 +123,7 @@ namespace Game.Tweener.Core
 
         private bool MainThreadAction(object obj)
         {
+            _timeScale = Time.timeScale;
             var value = (T) obj;
 
             _setter(value);
