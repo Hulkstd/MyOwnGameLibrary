@@ -63,6 +63,7 @@ namespace Game.Tweener.Core
 
         public virtual void Restart()
         {
+            DurationValue = 0;
             Play();
         }
 

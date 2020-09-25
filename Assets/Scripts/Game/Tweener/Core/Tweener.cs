@@ -106,12 +106,6 @@ namespace Game.Tweener.Core
             base.Play();
         }
 
-        public override void Restart()
-        {
-            DurationValue = 0f;
-            base.Restart();
-        }
-
         private object WorkThreadAction(object _)
         {
             var easeValue = Utility.Curves.ExecuteEaseFunc(_ease, Mathf.Clamp(DurationValue / Duration, 0, 1));

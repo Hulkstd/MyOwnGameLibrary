@@ -73,12 +73,6 @@ namespace Game.Tweener.Core
             base.Play();
         }
 
-        public override void Restart()
-        {
-            DurationValue = 0;
-            base.Restart();
-        }
-
         #region Sequence Function
         
         public Sequence Append(Tween tween)
